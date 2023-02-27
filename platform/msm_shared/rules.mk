@@ -1,7 +1,9 @@
 LOCAL_DIR := $(GET_LOCAL_DIR)
 
+
 INCLUDES += \
-			-I$(LOCAL_DIR)/include -I$(LK_TOP_DIR)/dev/panel/msm -I$(LK_TOP_DIR)/app/aboot
+			-I$(LOCAL_DIR)/include -I$(LK_TOP_DIR)/dev/panel/msm -I$(LK_TOP_DIR)/target/htcleo/app/aboot
+
 
 DEFINES += $(TARGET_XRES)
 DEFINES += $(TARGET_YRES)
@@ -307,6 +309,17 @@ ifeq ($(PLATFORM),msm7x30)
 	OBJS += $(LOCAL_DIR)/crypto_eng.o \
 			$(LOCAL_DIR)/crypto_hash.o \
 			$(LOCAL_DIR)/uart.o \
+			$(LOCAL_DIR)/nand.o \
+			$(LOCAL_DIR)/proc_comm.o \
+			$(LOCAL_DIR)/lcdc.o \
+			$(LOCAL_DIR)/mddi.o \
+			$(LOCAL_DIR)/certificate.o \
+			$(LOCAL_DIR)/image_verify.o \
+			$(LOCAL_DIR)/timer.o
+endif
+
+ifeq ($(PLATFORM),qsd8k)
+	OBJS += $(LOCAL_DIR)/uart.o \
 			$(LOCAL_DIR)/nand.o \
 			$(LOCAL_DIR)/proc_comm.o \
 			$(LOCAL_DIR)/lcdc.o \
