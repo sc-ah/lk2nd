@@ -93,6 +93,11 @@ static void wait_for_timer_op(void)
 	while (readl(SPSS_TIMER_STATUS) & SPSS_TIMER_STATUS_DGT_EN) ;
 }
 
+void platform_init_timer(void)
+{
+	writel(0, DGT_ENABLE);
+}
+
 void platform_uninit_timer(void)
 {
 	writel(0, DGT_ENABLE);
