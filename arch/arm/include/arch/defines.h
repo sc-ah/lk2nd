@@ -37,7 +37,18 @@
 #elif defined(ARM_CPU_CORE_KRAIT) || defined(ARM_CPU_CORE_A7)
  #define CACHE_LINE 64
 #else
- #error unknown cpu
+ #if ARM_CPU_ARM7
+/* irrelevant, no consistent cache */
+#define CACHE_LINE 32
+#elif ARM_CPU_ARM926
+#define CACHE_LINE 32
+#elif ARM_CPU_ARM1136
+#define CACHE_LINE 32
+#elif ARM_CPU_CORTEX_A8
+#define CACHE_LINE 64
+#else
+#error unknown cpu
+#endif
 #endif
 
 #define IS_CACHE_LINE_ALIGNED(addr)  !((uint32_t) (addr) & (CACHE_LINE - 1))
