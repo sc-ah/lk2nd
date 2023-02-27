@@ -55,29 +55,29 @@ void platform_early_init(void)
 	platform_init_timer();
 }
 
-void platform_init(void)
-{
-        dprintf(INFO, "platform_init()\n");
-#if (!ENABLE_NANDWRITE)
-        acpu_clock_init();
-#endif
-}
+// void platform_init(void)
+// {
+//         dprintf(INFO, "platform_init()\n");
+// #if (!ENABLE_NANDWRITE)
+//         acpu_clock_init();
+// #endif
+// }
 
-void display_init(void)
-{
-        struct fbcon_config *fb_cfg;
+// void display_init(void)
+// {
+//         struct fbcon_config *fb_cfg;
 
-#if DISPLAY_TYPE_MDDI
-	fb_config = mddi_init();
-	ASSERT(fb_config);
-	fbcon_setup(fb_config);
-#endif
+// #if DISPLAY_TYPE_MDDI
+// 	fb_config = mddi_init();
+// 	ASSERT(fb_config);
+// 	fbcon_setup(fb_config);
+// #endif
 
-#if DISPLAY_TYPE_LCDC
-	fb_config = lcdc_init();
-	ASSERT(fb_config);
-	fbcon_setup(fb_config);
-#endif
+// #if DISPLAY_TYPE_LCDC
+// 	fb_config = lcdc_init();
+// 	ASSERT(fb_config);
+// 	fbcon_setup(fb_config);
+// #endif
 
-}
+// }
 
