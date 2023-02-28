@@ -42,6 +42,7 @@ MODULES += \
 	lib/ptable \
 	dev/pmic/pm8x41 \
 	dev/ssbi \
+	lib/libfdt
 
 
 
