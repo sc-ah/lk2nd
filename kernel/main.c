@@ -88,7 +88,7 @@ void kmain(void)
 	dprintf(SPEW, "initializing heap\n");
 	heap_init();
 
-	__stack_chk_guard_setup();
+	//__stack_chk_guard_setup();
 
 	// initialize the threading system
 	dprintf(SPEW, "initializing threads\n");
