@@ -46,7 +46,7 @@ void uart_init(void);
 
 struct fbcon_config *lcdc_init(void);
 
-void platform_early_init(void)
+void platform_early_init_qsd8k(void)
 {
         //uart3_clock_init();
 	//uart_init();
