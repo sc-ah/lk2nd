@@ -46,6 +46,26 @@
 #define DGT_ENABLE_CLR_ON_MATCH_EN        2
 #define DGT_ENABLE_EN                     1
 
+#if PLATFORM_QSD8K
+#define GPT_REG(off) (MSM_GPT_BASE + (off))
+
+#define GPT_MATCH_VAL        GPT_REG(0x0000)
+#define GPT_COUNT_VAL        GPT_REG(0x0004)
+#define GPT_ENABLE           GPT_REG(0x0008)
+#define GPT_ENABLE_CLR_ON_MATCH_EN        2
+#define GPT_ENABLE_EN                     1
+#define GPT_CLEAR            GPT_REG(0x000C)
+
+#define DGT_MATCH_VAL        GPT_REG(0x0010)
+#define DGT_COUNT_VAL        GPT_REG(0x0014)
+#define DGT_ENABLE           GPT_REG(0x0018)
+#define DGT_ENABLE_CLR_ON_MATCH_EN        2
+#define DGT_ENABLE_EN                     1
+#define DGT_CLEAR            GPT_REG(0x001C)
+
+#define SPSS_TIMER_STATUS    GPT_REG(0x0034)
+#endif
+
 #define SPSS_TIMER_STATUS_DGT_EN    (1 << 0)
 
 static platform_timer_callback timer_callback;
