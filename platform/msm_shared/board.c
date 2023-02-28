@@ -115,7 +115,11 @@ static void platform_detect()
 
 			board.platform = board_info_v8.board_info_v3.msm_id;
 			board.platform_version = board_info_v8.board_info_v3.msm_version;
+			#if PLATFORM_QSD8K
+			board.platform_hw = 46
+			#else
 			board.platform_hw = board_info_v8.board_info_v3.hw_platform;
+			#endif
 			board.platform_subtype = board_info_v8.platform_subtype;
 
 			/*
