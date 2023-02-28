@@ -64,6 +64,9 @@
 #include <rpmb.h>
 #endif
 
+#if PLATFORM_QSD8K
+#include <lk2nd.h>
+#endif
 #if DEVICE_TREE
 #include <libfdt.h>
 #include <dev_tree.h>
