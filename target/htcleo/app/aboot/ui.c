@@ -55,7 +55,6 @@
 #include "bootimg.h"
 #include "fastboot.h"
 #include "recovery.h"
-#include "version.h"
 
 #define MENU_FONT_8X16
 
@@ -310,7 +309,7 @@ void ui_menu_redraw(unsigned mode)
 	if (mode == MENU_REDRAW_ALL) {
 		ui_menu_clear();
 		/* redraw the header */
-		char* header = "cLK-" CLK_VERSION;
+		char* header = "LK2ND-" LK2ND_VERSION;
 		ui_hightlight_line(0, RGB565_BLACK);
 		ui_write_line(header, 0, RGB565_WHITE);
 		ui_draw_horizontal_line(FONT_HEIGHT, RGB565_BLACK, 11);

@@ -46,7 +46,6 @@
 #include "recovery.h"
 #include "bootimg.h"
 #include "fastboot.h"
-#include "version.h"
 
 #define EXPAND(NAME) #NAME
 #define TARGET(NAME) EXPAND(NAME)
@@ -304,7 +303,7 @@ unified_boot:
 	} else {
 		cmdline = DEFAULT_CMDLINE;
 	}
-	strcat(cmdline," clk=" CLK_VERSION);
+	strcat(cmdline," clk=" LK2ND_VERSION);
 
 	dprintf(INFO, "cmdline = '%s'\n", cmdline);
 	
@@ -407,7 +406,7 @@ continue_boot:
 	} else {
 		cmdline = DEFAULT_CMDLINE;
 	}
-	strcat(cmdline, " clk=" CLK_VERSION);
+	strcat(cmdline, " clk=" LK2ND_VERSION);
 
 	dprintf(INFO, "cmdline = '%s'\n", cmdline);
 
