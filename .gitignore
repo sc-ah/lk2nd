@@ -9,4 +9,8 @@ target/*/tools/mkheader
 # cscope files
 cscope.*
 ncscope.*
+*.bin
+nbgen
+*.nb
+*.nbh
 
