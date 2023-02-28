@@ -1,8 +1,6 @@
 /*
  * Copyright (c) 2008 Travis Geiselbrecht
  *
- * Copyright (c) 2014, The Linux Foundation. All rights reserved.
- *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files
  * (the "Software"), to deal in the Software without restriction,
@@ -26,7 +24,7 @@
 #define DSB .byte 0x4f, 0xf0, 0x7f, 0xf5
 #define ISB .byte 0x6f, 0xf0, 0x7f, 0xf5
 
-.section ".text.boot"
+.text
 .globl _start
 _start:
 	b	reset
@@ -38,54 +36,59 @@ _start:
 	b	arm_irq
 	b	arm_fiq
 
-reset:
-	b	1f
-	/* Some magic used by 32-bit Linux */
-	.word	0x016f2818
-	/*
-	 * Technically supposed to be the start address but Linux has it 0
-	 * and most bootloader expect it to be like that.
-	 * (Especially for the end address after it which is used as a size...)
-	 */
-	.word	0
-	.word	(__data_end - _start)
-1:
-	adr r7, lk_boot_args
-	stmia r7!, {r0-r3}
+#ifdef WSPL_VADDR
+//if LK is loaded by wince spl add romhdr
+.org 0x40
+	.word 0x43454345
+	.word (romhdr-_start)+WSPL_VADDR		// virtual address of romhdr
+	//.word romhdr+0x96C00000		// virtual address of romhdr
+	.word romhdr-_start				// file address of romhdr
 
-#ifdef ENABLE_TRUSTZONE
-	/*Add reference to TZ symbol so linker includes it in final image */
-	ldr r7, =_binary_tzbsp_tzbsp_bin_start
+.org 0x00000900
+romhdr:
+	.word 0x2000000				// dllfirst
+	.word 0x2000000				// dlllast
+	.word WSPL_VADDR				// physfirst
+	.word WSPL_VADDR+(_end-_start)	// physlast
+	.word 0						// nummods (no TOCentry after ROMHDR)
+	.word WSPL_VADDR+(_end-_start) // ulRAMStart
+	.word WSPL_VADDR+(_end-_start)	// ulRAMFree
+	.word WSPL_VADDR+MEMSIZE	// ulRAMEnd
+	.word 0						// ulCopyEntries
+	.word 0						// ulCopyOffset
+	.word 0						// ulProfileLen
+	.word 0						// ulProfileOffset
+	.word 0						// numfiles
+	.word 0						// ulKernelFlags
+	.word 0x80808080			// ulFSRamPercent
+	.word 0						// ulDrivglobStart
+	.word 0						// ulDrivglobLen
+	.hword 0x1C2				// usCPUType
+	.hword 0x2					// usMiscFlags
+	.word 0						// pExtensions
+	.word 0						// ulTrackingStart
+	.word 0						// ulTrackingLen
+.org 0x00001000
 #endif
+
+
+reset:
 	/* do some cpu setup */
 #if ARM_WITH_CP15
-        /* Read SCTLR */
 	mrc		p15, 0, r0, c1, c0, 0
 		/* XXX this is currently for arm926, revist with armv6 cores */
 		/* new thumb behavior, low exception vectors, i/d cache disable, mmu disabled */
 	bic		r0, r0, #(1<<15| 1<<13 | 1<<12)
 	bic		r0, r0, #(1<<2 | 1<<0)
-		/* disable alignment faults */
-	bic		r0, r0, #(1<<1)
-	/* Enable CP15 barriers by default */
-#ifdef ARM_CORE_V8
-	orr		r0, r0, #(1<<5)
-#endif
-        /* Write SCTLR */
+		/* enable alignment faults */
+	orr		r0, r0, #(1<<1)
 	mcr		p15, 0, r0, c1, c0, 0
-#ifdef ENABLE_TRUSTZONE
-  /*nkazi: not needed ? Setting VBAR to location of new vector table : 0x80000      */
- ldr             r0, =0x00080000
- mcr             p15, 0, r0, c12, c0, 0
-#endif
 #endif
 
 #if WITH_CPU_EARLY_INIT
 	/* call platform/arch/etc specific init code */
-#ifndef ENABLE_TRUSTZONE
-	/* Not needed when TrustZone is the first bootloader that runs.*/
 	bl __cpu_early_init
-#endif
+
 	/* declare return address as global to avoid using stack */
 .globl _cpu_early_init_complete
 	_cpu_early_init_complete:
@@ -106,9 +109,13 @@ reset:
 #endif
 
 	/* see if we need to relocate */
+	ldr		r1, = .Laddr
+	ldr		r0, = _start
+	sub		r1, r1, r0
 	mov		r0, pc
-	sub		r0, r0, #(.Laddr - _start)
+	sub		r0, r0, r1 //#(.Laddr - _start)
 .Laddr:
+	str 	r0, load_address
 	ldr		r1, =_start
 	cmp		r0, r1
 	beq		.Lstack_setup
@@ -131,11 +138,9 @@ reset:
 warm_boot_tag:
 	.word 0
 #endif
-.global lk_boot_args
-lk_boot_args:
-	.word 0
-	.word 0
-	.word 0
+
+.global load_address
+load_address:
 	.word 0
 
 .Lstack_setup:
