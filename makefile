@@ -147,6 +147,10 @@ ifeq ($(USER_BUILD_VARIANT),true)
   DEFINES += USER_BUILD_VARIANT=1
 endif
 
+ifeq ($(BOARD_HTC_LEO),true)
+  DEFINES += BOARD_HTC_LEO=1
+endif
+
 # these need to be filled out by the project/target/platform rules.mk files
 TARGET :=
 PLATFORM :=
