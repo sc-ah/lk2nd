@@ -1,4 +1,3 @@
-export VERSION=2.0
 ifeq ($(MAKECMDGOALS),spotless)
 spotless:
 	rm -rf build-*
@@ -242,7 +241,8 @@ nbh: bin/nbgen
 	$(MAKE)  lk2nd-htcleo
 	cp build-lk2nd-htcleo/lk.bin bin/
 	cd bin ; ./nbgen os.nb
-	cd bin ; ./yang -F RUU_signed.nbh -f os.nb -t 0x400 -s 64 -d PB8110000 -c 11111111 -v CLK$(VERSION) -l WWE
+	echo $(LK2ND_VERSION)
+	cd bin ; ./yang -F RUU_signed.nbh -f os.nb -t 0x400 -s 64 -d PB8110000 -c 11111111 -v LK2ND-$(LK2ND_TAG:v%=%) -l WWE
 # generate a config.h file with all of the DEFINES laid out in #define format
 configheader:
 
