@@ -897,12 +897,18 @@ void boot_linux(void *kernel, unsigned *tags,
 #endif
 	bs_set_timestamp(BS_KERNEL_ENTRY);
 
+	if (!PLATFORM_QSD8K){
 	if (IS_ARM64(kptr))
 		/* Jump to a 64bit kernel */
 		scm_elexec_call((paddr_t)kernel, tags_phys);
 	else
 		/* Jump to a 32bit kernel */
 		entry(0, machtype, (unsigned*)tags_phys);
+		}else {
+			/* Jump to a 32bit kernel */
+			//qsd8k is always 32bit
+		entry(0, machtype, (unsigned*)tags_phys);
+		}
 }
 
 /* Function to check if the memory address range falls within the aboot
@@ -2085,6 +2091,7 @@ void read_device_info(device_info *dev)
 		if (memcmp(info->magic, DEVICE_MAGIC, DEVICE_MAGIC_SIZE))
 		{
 			memcpy(info->magic, DEVICE_MAGIC, DEVICE_MAGIC_SIZE);
+			if (!PLATFORM_QSD8K){
 			if (is_secure_boot_enable()) {
 				info->is_unlocked = 0;
 #if !VBOOT_MOTA
@@ -2095,6 +2102,11 @@ void read_device_info(device_info *dev)
 #if !VBOOT_MOTA
 				info->is_unlock_critical = 1;
 #endif
+			}
+			} else {
+				//qsd8k platform is free so unlock it by default
+				info->is_unlocked = 1;
+				info->is_unlock_critical = 1;
 			}
 			info->is_tampered = 0;
 #if USER_BUILD_VARIANT
@@ -2113,11 +2125,17 @@ void read_device_info(device_info *dev)
 		else if(info->devinfo_version != M_DEVICE_INFO_VER)
 		{
 			info->devinfo_version = M_DEVICE_INFO_VER;
+			if (!PLATFORM_QSD8K){
 			if (is_secure_boot_enable())
 				info->is_unlock_critical = 0;
 			else
 				info->is_unlock_critical = 1;
 			info->verity_mode = 1; //enforcing by default
+			}
+			else{
+			info -> is_unlock_critical =1;
+			info->verity_mode = 0; //force unlocked on qsd8k
+			}
 		}
 #endif
 		write_device_info(info);
@@ -3309,11 +3327,13 @@ void cmd_flash_nand(const char *arg, void *data, unsigned sz)
 
 static inline uint64_t validate_partition_size(struct ptentry *ptn)
 {
+	if (!PLATFORM_QSD8K){
 	if (ptn->length && flash_num_pages_per_blk() && page_size) {
 		if ((ptn->length < ( UINT_MAX / flash_num_pages_per_blk())) && ((ptn->length * flash_num_pages_per_blk()) < ( UINT_MAX / page_size))) {
 			return ptn->length * flash_num_pages_per_blk() * page_size;
 		}
         }
+		}
 	return 0;
 }
 
@@ -3913,7 +3933,9 @@ void aboot_fastboot_register_commands(void)
 			(const char *) panel_display_mode);
 	fastboot_publish("version-bootloader", (const char *) device.bootloader_version);
 	fastboot_publish("version-baseband", (const char *) device.radio_version);
+	if (!PLATFORM_QSD8K){
 	fastboot_publish("secure", is_secure_boot_enable()? "yes":"no");
+	}
 	fastboot_publish("unlocked", device.is_unlocked ? "yes":"no");
 	smem_get_hw_platform_name((unsigned char *) hw_platform_buf, sizeof(hw_platform_buf));
 	snprintf(get_variant, MAX_RSP_SIZE, "%s %s", hw_platform_buf,
