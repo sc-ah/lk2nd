@@ -31,7 +31,7 @@ static struct ptentry board_part_list[MAX_PTABLE_PARTS] __attribute__ ((aligned 
 		},
 		{
 				.name = "recovery",
-				.length = 5 /* In MB */,
+				.length = 50 /* In MB */,
 		},
 		{
 				.name = "sboot",
@@ -39,7 +39,7 @@ static struct ptentry board_part_list[MAX_PTABLE_PARTS] __attribute__ ((aligned 
 		},
 		{
 				.name = "boot",
-				.length = 5 /* In MB */,
+				.length = 50 /* In MB */,
 		},
 		{
 				.name = "system",
