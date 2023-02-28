@@ -8,6 +8,7 @@ INCLUDES += \
 DEFINES += $(TARGET_XRES)
 DEFINES += $(TARGET_YRES)
 
+ifneq ($(PLATFORM),qsd8k)
 OBJS += \
 	$(LOCAL_DIR)/debug.o \
 	$(LOCAL_DIR)/smem.o \
@@ -18,6 +19,7 @@ OBJS += \
 	$(LOCAL_DIR)/hsusb.o \
 	$(LOCAL_DIR)/boot_stats.o \
 	$(LOCAL_DIR)/crc32.o
+	endif
 
 ifeq ($(ENABLE_WDOG_SUPPORT),1)
 OBJS += \
@@ -319,14 +321,17 @@ ifeq ($(PLATFORM),msm7x30)
 endif
 
 ifeq ($(PLATFORM),qsd8k)
-	OBJS += $(LOCAL_DIR)/uart.o \
-			$(LOCAL_DIR)/nand.o \
-			$(LOCAL_DIR)/proc_comm.o \
-			$(LOCAL_DIR)/lcdc.o \
-			$(LOCAL_DIR)/mddi.o \
-			$(LOCAL_DIR)/certificate.o \
-			$(LOCAL_DIR)/image_verify.o \
-			$(LOCAL_DIR)/timer.o
+	OBJS += $(LOCAL_DIR)/qsd8k/timer.o \
+	$(LOCAL_DIR)/proc_comm.o \
+	$(LOCAL_DIR)/debug.o \
+	$(LOCAL_DIR)/smem.o \
+	$(LOCAL_DIR)/smem_ptable.o \
+	$(LOCAL_DIR)/hsusb.o \
+	$(LOCAL_DIR)/lcdc.o \
+	$(LOCAL_DIR)/mddi.o \
+	$(LOCAL_DIR)/partition_parser.o \
+		$(LOCAL_DIR)/boot_stats.o \
+	$(LOCAL_DIR)/crc32.o
 endif
 
 ifeq ($(PLATFORM),mdm9x15)
