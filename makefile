@@ -1,3 +1,4 @@
+export VERSION=2.0
 ifeq ($(MAKECMDGOALS),spotless)
 spotless:
 	rm -rf build-*
@@ -228,10 +229,20 @@ include make/build.mk
 
 clean: $(EXTRA_CLEANDEPS)
 	rm -f $(ALLOBJS) $(DTBS) $(DEPS) $(GENERATED) $(OUTBIN) $(OUTELF) $(OUTELF).lst $(OUTELF_STRIP)
-
+	rm -rf bin/nbgen
+	rm -rf bin/RUU_signed.nbh
 install: all
 	scp $(OUTBIN) 192.168.0.4:/tftproot
 
+
+bin/nbgen:
+	gcc -std=c99 nbgen.c -o bin/nbgen
+
+nbh: bin/nbgen
+	$(MAKE)  lk2nd-htcleo
+	cp build-lk2nd-htcleo/lk.bin bin/
+	cd bin ; ./nbgen os.nb
+	cd bin ; ./yang -F RUU_signed.nbh -f os.nb -t 0x400 -s 64 -d PB8110000 -c 11111111 -v CLK$(VERSION) -l WWE
 # generate a config.h file with all of the DEFINES laid out in #define format
 configheader:
 
